@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="FinanceControl - controle simples de receitas, despesas e contas a pagar.">
+  <title>FinanceControl | Sistema Financeiro</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <aside class="sidebar">
+    <a class="brand" href="#"><span class="brand-icon">F</span><span>Finance<span class="brand-light">Control</span></span></a>
+    <p class="nav-label">MENU PRINCIPAL</p>
+    <a class="nav-link active" href="#dashboard"><span>▦</span> Visão geral</a>
+    <a class="nav-link" href="#transactions"><span>↕</span> Movimentações</a>
+    <a class="nav-link" href="#bills"><span>▣</span> Contas a pagar</a>
+    <a class="nav-link" href="#reports"><span>▥</span> Relatórios</a>
+    <div class="sidebar-bottom">
+      <div class="profile-avatar">FC</div>
+      <div><strong>Meu Financeiro</strong><small>Conta demonstrativa</small></div>
+    </div>
+  </aside>
+
+  <main class="main-content" id="dashboard">
+    <header class="topbar">
+      <div><p class="eyebrow">QUARTA-FEIRA, 25 DE NOVEMBRO</p><h1>Visão geral</h1></div>
+      <button class="primary-btn" id="newTransactionBtn">＋ Nova movimentação</button>
+    </header>
+
+    <section class="welcome-card">
+      <div><span class="welcome-tag">SEU DINHEIRO, SOB CONTROLE</span><h2>Olá! Vamos cuidar das suas finanças.</h2><p>Acompanhe suas entradas, saídas e compromissos em um só lugar.</p></div>
+      <img src="assets/photo.png" alt="Ilustração de planejamento financeiro">
+    </section>
+
+    <section class="summary-grid">
+      <article class="summary-card"><div class="card-top"><span>Saldo atual</span><span class="card-icon purple">▤</span></div><strong id="balanceValue">R$ 0,00</strong><small class="muted">Receitas menos despesas</small></article>
+      <article class="summary-card"><div class="card-top"><span>Receitas</span><span class="card-icon green">↗</span></div><strong id="incomeValue">R$ 0,00</strong><small class="positive">Total de entradas</small></article>
+      <article class="summary-card"><div class="card-top"><span>Despesas</span><span class="card-icon red">↘</span></div><strong id="expenseValue">R$ 0,00</strong><small class="negative">Total de saídas</small></article>
+      <article class="summary-card"><div class="card-top"><span>Contas em aberto</span><span class="card-icon orange">◷</span></div><strong id="billsValue">0</strong><small class="muted">Compromissos pendentes</small></article>
+    </section>
+
+    <section class="content-grid">
+      <article class="panel chart-panel" id="reports">
+        <div class="panel-heading"><div><h3>Fluxo financeiro</h3><p>Receitas e despesas cadastradas</p></div><span class="period-pill">Visão geral</span></div>
+        <div class="chart-wrap"><canvas id="financeChart"></canvas></div>
+      </article>
+      <article class="panel">
+        <div class="panel-heading"><div><h3>Resumo</h3><p>Distribuição das movimentações</p></div></div>
+        <div class="chart-wrap doughnut-wrap"><canvas id="distributionChart"></canvas></div>
+        <div class="legend"><span><i class="dot income-dot"></i> Receitas</span><span><i class="dot expense-dot"></i> Despesas</span></div>
+      </article>
+    </section>
+
+    <section class="panel table-panel" id="transactions">
+      <div class="panel-heading"><div><h3>Movimentações recentes</h3><p>Histórico de receitas e despesas</p></div><button class="text-btn" id="seeAllBtn">Atualizar lista ↗</button></div>
+      <div class="table-scroll"><table><thead><tr><th>Descrição</th><th>Categoria</th><th>Data</th><th>Tipo</th><th>Valor</th><th></th></tr></thead><tbody id="transactionTable"><tr><td colspan="6" class="empty-state">Carregando movimentações...</td></tr></tbody></table></div>
+    </section>
+
+    <section class="panel bills-panel" id="bills">
+      <div class="panel-heading"><div><h3>Contas a pagar</h3><p>Organize seus próximos compromissos</p></div><button class="outline-btn" id="newBillBtn">＋ Adicionar conta</button></div>
+      <div id="billsList" class="bills-list"><p class="empty-state">Carregando contas...</p></div>
+    </section>
+    <footer>FinanceControl <span>•</span> Projeto de portfólio — Java, Spring Boot, MySQL e JavaScript</footer>
+  </main>
+
+  <div class="modal-backdrop" id="transactionModal">
+    <form class="modal" id="transactionForm">
+      <button type="button" class="close-btn" data-close="transactionModal">×</button>
+      <p class="eyebrow">NOVA MOVIMENTAÇÃO</p><h2>Registrar lançamento</h2>
+      <label>Descrição<input name="description" required maxlength="100" placeholder="Ex.: Salário, mercado..."></label>
+      <div class="form-row"><label>Tipo<select name="type"><option value="INCOME">Receita</option><option value="EXPENSE">Despesa</option></select></label><label>Categoria<input name="category" required placeholder="Ex.: Trabalho"></label></div>
+      <div class="form-row"><label>Valor (R$)<input name="amount" type="number" min="0.01" step="0.01" required placeholder="0,00"></label><label>Data<input name="date" type="date" required></label></div>
+      <button class="primary-btn full-btn" type="submit">Salvar movimentação</button>
+      <p class="form-message" id="transactionMessage"></p>
+    </form>
+  </div>
+
+  <div class="modal-backdrop" id="billModal">
+    <form class="modal" id="billForm">
+      <button type="button" class="close-btn" data-close="billModal">×</button>
+      <p class="eyebrow">CONTAS A PAGAR</p><h2>Adicionar compromisso</h2>
+      <label>Descrição<input name="description" required placeholder="Ex.: Conta de energia"></label>
+      <div class="form-row"><label>Valor (R$)<input name="amount" type="number" min="0.01" step="0.01" required></label><label>Vencimento<input name="dueDate" type="date" required></label></div>
+      <button class="primary-btn full-btn" type="submit">Salvar conta</button>
+      <p class="form-message" id="billMessage"></p>
+    </form>
+  </div>
+  <script src="app.js"></script>
+</body>
+</html>
